@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { TypeOrmTestingConfig } from '../shared/testing-utils/typeorm-testing-config';
 import { MuseumEntity } from './museum.entity';
 import { MuseumService } from './museum.service';
-import faker from 'faker';
+import * as faker from 'faker';
 
 describe('MuseumService', () => {
   let service: MuseumService;
@@ -26,7 +26,7 @@ describe('MuseumService', () => {
         description: faker.lorem.sentence(),
         address: faker.address.streetAddress(),
         city: faker.address.city(),
-        image: faker.image.imageUrl(),
+        image: faker.internet.url(),
         exhibitions: [],
         artworks: [],
       });
@@ -80,7 +80,7 @@ describe('MuseumService', () => {
       description: faker.lorem.sentence(),
       address: faker.address.streetAddress(),
       city: faker.address.city(),
-      image: faker.image.imageUrl(),
+      image: faker.internet.url(),
       exhibitions: [],
       artworks: [],
     };

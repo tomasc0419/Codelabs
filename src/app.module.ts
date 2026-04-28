@@ -17,6 +17,7 @@ import { MovementEntity } from './movement/movement.entity';
 import { MuseumEntity } from './museum/museum.entity';
 import { SponsorEntity } from './sponsor/sponsor.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MuseumArtworkModule } from './museum-artwork/museum-artwork.module';
 
 @Module({
  imports: [MuseumModule, ExhibitionModule, ArtworkModule, SponsorModule, ImageModule, ArtistModule, MovementModule,
@@ -31,6 +32,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
      dropSchema: true,
      synchronize: true
    }),
+   MuseumArtworkModule,
  ],
  controllers: [AppController],
  providers: [AppService],
