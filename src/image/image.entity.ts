@@ -1,0 +1,23 @@
+/* eslint-disable prettier/prettier */
+/* archivo: src/image/image.entity.ts */
+import { ArtworkEntity } from "../artwork/artwork.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+
+@Entity()
+export class ImageEntity {
+   @PrimaryGeneratedColumn("uuid")
+   id!: string;
+   @Column()
+   source!: string;
+   @Column()
+   altText!: string;
+   @Column()
+   height!: number;
+   @Column()
+   width!: number;
+
+   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+   @ManyToOne(() => ArtworkEntity, artwork => artwork.images)
+   artwork!: ArtworkEntity;
+}
+/* archivo: src/image/image.entity.ts */
