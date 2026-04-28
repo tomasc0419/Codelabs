@@ -1,12 +1,10 @@
-export function BusinessLogicException(
-  this: any,
-  message: string,
-  type: number,
-) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  this.message = message;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  this.type = type;
+export class BusinessLogicException extends Error {
+  public type: BusinessError;
+
+  constructor(message: string, type: BusinessError) {
+    super(message);
+    this.type = type;
+  }
 }
 
 export enum BusinessError {

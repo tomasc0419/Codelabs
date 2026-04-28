@@ -19,6 +19,8 @@ export class MuseumEntity {
    city!: string;
    @Column()
    image!: string;
+   @Column()
+   foundedBefore! : number;
 
    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
    @OneToMany(() => ExhibitionEntity, exhibition => exhibition.museum)
