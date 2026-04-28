@@ -27,6 +27,7 @@ describe('MuseumService', () => {
         address: faker.address.streetAddress(),
         city: faker.address.city(),
         image: faker.internet.url(),
+        foundedBefore: faker.datatype.number(),
         exhibitions: [],
         artworks: [],
       });
@@ -49,17 +50,17 @@ describe('MuseumService', () => {
     await seedDatabase();
   });
 
-  it('should be defined', () => {
+  it('debe ser definido', () => {
     expect(service).toBeDefined();
   });
 
-  it('findAll should return all museums', async () => {
-    const museums = await service.findAll();
+  it('findAll debe retornar todos los museos', async () => {
+    const museums = await service.findAll({});
     expect(museums).not.toBeNull();
     expect(museums).toHaveLength(museumsList.length);
   });
 
-  it('findOne should return a museum by id', async () => {
+  it('findOne debe retornar un museo por id', async () => {
     const storedMuseum = museumsList[0];
     const museum = await service.findOne(storedMuseum.id);
 
@@ -67,20 +68,21 @@ describe('MuseumService', () => {
     expect(museum.name).toEqual(storedMuseum.name);
   });
 
-  it('findOne should throw an exception for an invalid museum', async () => {
+  it('findOne debe lanzar una excepción para un museo inválido', async () => {
     await expect(() => service.findOne('0')).rejects.toHaveProperty(
       'message',
-      'The museum with the given id was not found',
+      'el museo con el id dado no fue encontrado',
     );
   });
 
-  it('create should return a new museum', async () => {
+  it('create debe retornar un nuevo museo', async () => {
     const museum: Partial<MuseumEntity> = {
       name: faker.company.companyName(),
       description: faker.lorem.sentence(),
       address: faker.address.streetAddress(),
       city: faker.address.city(),
       image: faker.internet.url(),
+      foundedBefore: faker.datatype.number(),
       exhibitions: [],
       artworks: [],
     };
@@ -89,7 +91,7 @@ describe('MuseumService', () => {
     expect(newMuseum).not.toBeNull();
   });
 
-  it('update should modify a museum', async () => {
+  it('update debe modificar un museo', async () => {
     const museum = museumsList[0];
     museum.name = 'New name';
 
@@ -97,7 +99,7 @@ describe('MuseumService', () => {
     expect(updated.name).toEqual('New name');
   });
 
-  it('delete should remove a museum', async () => {
+  it('delete debe eliminar un museo', async () => {
     const museum = museumsList[0];
     await service.delete(museum.id);
 
@@ -107,4 +109,69 @@ describe('MuseumService', () => {
 
     expect(deleted).toBeNull();
   });
+  //filtro nombre
+  it('debe filtrar museos por nombre', async () => {
+  museumsList[0].name = 'Museo Oro';
+  await repository.save(museumsList[0]);
+
+  const result = await service.findAll({ name: 'oro' });
+
+  expect(result.length).toBeGreaterThan(0);
+  result.forEach(m => {
+    expect(m.name.toLowerCase()).toContain('oro');
+  });
+});
+//filtro ciudad
+it('debe filtrar museos por ciudad', async () => {
+  museumsList[0].city = 'Bogota';
+  await repository.save(museumsList[0]);
+
+  const result = await service.findAll({ city: 'bogota' });
+
+  expect(result.length).toBeGreaterThan(0);
+  result.forEach(m => {
+    expect(m.city.toLowerCase()).toContain('bogota');
+  });
+});
+//filtro fundados antes de un año
+it('debe filtrar museos por fundados antes de un año', async () => {
+  museumsList[0].foundedBefore = 1800;
+  museumsList[1].foundedBefore = 2000;
+
+  await repository.save(museumsList);
+
+  const result = await service.findAll({ foundedBefore: '1900' });
+
+  result.forEach(m => {
+    expect(m.foundedBefore).toBeLessThan(1900);
+  });
+});
+//filtro paginación
+it('debe paginar los museos', async () => {
+  const result = await service.findAll({ page: '1', limit: '2' });
+
+  expect(result.length).toBeLessThanOrEqual(2);
+});
+//combinacion de filtros
+it('debe filtrar por nombre y ciudad', async () => {
+  museumsList[0].name = 'Arte Moderno';
+  museumsList[0].city = 'Bogota';
+
+  await repository.save(museumsList[0]);
+
+  const result = await service.findAll({
+    name: 'arte',
+    city: 'bogota',
+  });
+
+  result.forEach(m => {
+    expect(m.name.toLowerCase()).toContain('arte');
+    expect(m.city.toLowerCase()).toContain('bogota');
+  });
+});
+it('debe retornar todos los museos cuando no se proporcionan filtros', async () => {
+  const result = await service.findAll({});
+
+  expect(result.length).toBeGreaterThan(0);
+});
 });
